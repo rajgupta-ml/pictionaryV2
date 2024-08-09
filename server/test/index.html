@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<script type="module">
+    import { io } from "https://cdn.socket.io/4.7.5/socket.io.esm.min.js";
+    const socket = io("http://localhost:3000");
+
+    socket.on("connect", () => {
+        console.log("Connected to the server");
+        socket.on("userJoined", (id) => {
+            console.log("user has joined", id);
+        })
+
+        socket.on("set-room-id", ({ roomId }) => {
+            document.cookie = `roomId=${roomId}; path=/;`;
+        })
+    });
+
+    const name = prompt("Enter Name");
+
+    const JoinRoomBtn = document.getElementById("joinBtn");
+    JoinRoomBtn.addEventListener("click", JoinRoom);
+    function JoinRoom() {
+        socket.emit("join-room", { customRoomId: undefined, choice: "Global", name })
+    }
+
+
+    const PjoinRoomBtn = document.getElementById("pJoinBtn");
+    PjoinRoomBtn.addEventListener("click", pJoinRoom);
+    function pJoinRoom() {
+        socket.emit("join-room", { customRoomId: "room2", choice: "Private", name })
+    }
+
+
+    const showBtn = document.getElementById("showBtn");
+    showBtn.addEventListener("click", showB);
+
+    function showB() {
+        socket.emit("show-rooms", {})
+    }
+
+</script>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button type="button" id="joinBtn">GlobalRoom</button>
+    <button type="button" id="pJoinBtn">PrivateRoom</button>
+    <button type="button" id="showBtn">ShowRoom</button>
+</body>
+
+</html>
