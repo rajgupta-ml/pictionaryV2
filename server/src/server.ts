@@ -7,8 +7,8 @@ import { joinRoom } from "./utils/JoinRoom";
 
 
 const app = express();
-const rooms : Map<string, Rooms> = new Map();
-const socketIdToNameMapping : Map<string, string> = new Map(); 
+const roomsToSocketMapping : Map<string, Rooms> = new Map();
+const socketToRoomMapping : Map<string, string> = new Map();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
     cors : {
@@ -22,13 +22,11 @@ io.on("connection", (socket) => {
     // Check if room length is less than 8
     socket.on("join-room", (message) => {
         const {choice, name} = message;
-        let roomId;
-        roomId = joinRoom(socket, rooms, choice, message.customRoomId ? message.customRoomId : undefined, name);
-        socket.emit("set-room-id", {roomId});
+        joinRoom(socket, roomsToSocketMapping, choice, message.customRoomId ? message.customRoomId : undefined, name, socketToRoomMapping);
     })
-
+// Remove this event later on
 socket.on("show-rooms", () => {
-    console.log(rooms)
+    console.log(roomsToSocketMapping)
 });
 
 });

@@ -11,9 +11,6 @@
             console.log("user has joined", id);
         })
 
-        socket.on("set-room-id", ({ roomId }) => {
-            document.cookie = `roomId=${roomId}; path=/;`;
-        })
     });
 
     const name = prompt("Enter Name");
